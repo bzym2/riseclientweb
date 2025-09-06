@@ -3,46 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>上升客户端下载</title>
-  <script type="module" src="https://esm.run/@material/web/all"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* 背景流动渐变 */
     body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background: #f3f4f6;
-      color: #1f1f1f;
+      background: linear-gradient(270deg, #3b82f6, #a855f7, #ec4899);
+      background-size: 600% 600%;
+      animation: gradientFlow 15s ease infinite;
     }
-    header {
-      background: #1976d2;
-      color: white;
-      padding: 1rem;
-      font-size: 1.5rem;
-      font-weight: bold;
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-    main {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-width: 600px;
-      margin: auto;
-    }
-    md-card {
-      width: 100%;
-    }
-    .latest md-filled-button {
-      --md-filled-button-container-color: linear-gradient(90deg, #1976d2, #42a5f5);
-      font-weight: bold;
-    }
-    .old md-filled-button {
-      --md-filled-button-container-color: #9e9e9e;
-    }
-    .center {
-      text-align: center;
-      padding: 2rem;
-    }
+    /* 对勾动画 */
     .checkmark {
       font-size: 4rem;
-      color: #4caf50;
+      color: #22c55e;
       animation: pop 0.5s ease;
     }
     @keyframes pop {
@@ -51,104 +28,187 @@
     }
   </style>
 </head>
-<body>
-  <header>上升客户端</header>
-  <main id="version-list"></main>
+<body class="text-white min-h-screen flex flex-col">
 
-  <!-- 下载对话框 -->
-  <md-dialog id="downloadDialog">
-    <div slot="headline" id="dialogTitle">选择下载线路</div>
-    <form id="downloadForm" slot="content">
-      <md-radio name="mirror" value="cn" checked>国内网盘</md-radio><br>
-      <md-radio name="mirror" value="google">Google 云盘</md-radio><br>
-      <md-radio name="mirror" value="backup">备用链接</md-radio>
-    </form>
-    <div slot="actions">
-      <md-text-button id="cancelBtn">返回</md-text-button>
-      <md-text-button id="nextBtn">下一步</md-text-button>
+  <!-- 顶部 -->
+  <header class="text-center py-6">
+    <img src="https://proxy.bzym.fun/https://riseclient.com/images/rise.png" class="h-20 mx-auto mb-4 drop-shadow-xl">
+    <h1 class="text-5xl font-extrabold">上升客户端</h1>
+    <p class="opacity-80">破解来源于: nespola cheats</p>
+  </header>
+
+  <!-- 版本列表 -->
+  <main class="flex-1 p-6 space-y-6 max-w-3xl mx-auto">
+    <!-- 最新版 -->
+    <div class="bg-white bg-opacity-10 p-6 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-semibold">6.6.5</h2>
+      <p class="text-sm opacity-80 mb-4">发行日子：2025-07-18</p>
+      <button 
+        class="latest-btn bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transform hover:scale-105 transition-all"
+        data-version="6.6.5">
+        下载
+      </button>
     </div>
-  </md-dialog>
+
+    <!-- 历史版本 -->
+    <div class="bg-white bg-opacity-10 p-6 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-semibold">6.6.4 R3</h2>
+      <p class="text-sm opacity-80 mb-4">发行日子：2025-07-10</p>
+      <button class="old-btn bg-gray-500 text-white py-3 px-6 rounded-xl" data-version="6.6.4 R3">下载</button>
+    </div>
+    <div class="bg-white bg-opacity-10 p-6 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-semibold">6.6.4</h2>
+      <p class="text-sm opacity-80 mb-4">发行日子：2025-07-03</p>
+      <button class="old-btn bg-gray-500 text-white py-3 px-6 rounded-xl" data-version="6.6.4">下载</button>
+    </div>
+  </main>
+
+  <!-- 底部 -->
+  <footer class="text-center text-sm opacity-70 py-6">
+    &copy; Github: <a href="https://github.com/bzym2/riseclientweb" class="underline">bzym2/riseclientweb</a>
+  </footer>
+
+  <!-- Popup -->
+  <div id="popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white text-black rounded-2xl w-96 p-6 relative shadow-2xl" id="popupCard">
+      <!-- 顶部操作 -->
+      <div class="flex justify-between mb-4">
+        <button id="backBtn" class="text-blue-600 hover:underline">返回</button>
+        <button id="nextBtn" class="text-blue-600 hover:underline opacity-50 cursor-not-allowed">下一步</button>
+      </div>
+      <!-- 内容 -->
+      <h2 class="text-xl font-semibold mb-4" id="popupTitle">选择下载线路</h2>
+      <div class="space-y-3" id="mirrorOptions">
+        <label class="flex items-center space-x-2">
+          <input type="radio" name="mirror" value="cn" class="accent-blue-600">
+          <span>国内网盘</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="radio" name="mirror" value="google" class="accent-blue-600">
+          <span>Google 云盘</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="radio" name="mirror" value="backup" class="accent-blue-600">
+          <span>备用链接</span>
+        </label>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // 版本数据
-    const versions = [
-      {
-        version: "6.6.5",
-        date: "2025-07-18",
-        links: {
-          cn: "https://pan.baidu.com/xxxx",
-          google: "https://drive.google.com/file/d/1_wU0nKw7_E21-bmk61SEJ7O3ayoZNIQz/view?usp=sharing",
-          backup: "https://example.com/backup1"
-        },
-        latest: true
+    const versions = {
+      "6.6.5": {
+        cn: "https://pan.baidu.com/xxxx",
+        google: "https://drive.google.com/file/d/1_wU0nKw7_E21-bmk61SEJ7O3ayoZNIQz/view?usp=sharing",
+        backup: "https://example.com/backup1"
       },
-      {
-        version: "6.6.4 R3",
-        date: "2025-07-10",
-        links: {
-          cn: "https://pan.baidu.com/yyyy",
-          google: "https://drive.google.com/file/d/1cFGmYFroJbEDAbh8l8Gd1DAvABxgPk8Z/view?usp=sharing",
-          backup: "https://example.com/backup2"
-        }
+      "6.6.4 R3": {
+        cn: "https://pan.baidu.com/yyyy",
+        google: "https://drive.google.com/file/d/1cFGmYFroJbEDAbh8l8Gd1DAvABxgPk8Z/view?usp=sharing",
+        backup: "https://example.com/backup2"
       },
-      {
-        version: "6.6.4",
-        date: "2025-07-03",
-        links: {
-          cn: "https://pan.baidu.com/zzzz",
-          google: "https://drive.google.com/file/d/1sAXB7M9P3gvtNGodxSWn_VU_x86_PUxS/view?usp=sharing",
-          backup: "https://example.com/backup3"
-        }
+      "6.6.4": {
+        cn: "https://pan.baidu.com/zzzz",
+        google: "https://drive.google.com/file/d/1sAXB7M9P3gvtNGodxSWn_VU_x86_PUxS/view?usp=sharing",
+        backup: "https://example.com/backup3"
       }
-    ];
+    };
 
-    const list = document.getElementById("version-list");
-    const dialog = document.getElementById("downloadDialog");
-    const cancelBtn = document.getElementById("cancelBtn");
+    const popup = document.getElementById("popup");
+    const backBtn = document.getElementById("backBtn");
     const nextBtn = document.getElementById("nextBtn");
+    const popupCard = document.getElementById("popupCard");
     let currentVersion = null;
+    let selectedLink = null;
 
-    // 渲染版本列表
-    versions.forEach(v => {
-      const card = document.createElement("md-card");
-      card.className = v.latest ? "latest" : "old";
-      card.innerHTML = `
-        <div style="padding:1rem;">
-          <h2>${v.version}</h2>
-          <p>发行日期：${v.date}</p>
-          <md-filled-button>${v.latest ? "下载" : "历史下载"}</md-filled-button>
-        </div>
-      `;
-      card.querySelector("md-filled-button").addEventListener("click", () => {
-        currentVersion = v;
-        dialog.show();
+    document.querySelectorAll(".latest-btn, .old-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentVersion = btn.dataset.version;
+        popup.classList.remove("hidden");
+        resetPopup();
       });
-      list.appendChild(card);
     });
 
-    cancelBtn.addEventListener("click", () => dialog.close());
+    backBtn.addEventListener("click", () => {
+      popup.classList.add("hidden");
+    });
+
+    document.querySelectorAll("input[name=mirror]").forEach(radio => {
+      radio.addEventListener("change", e => {
+        selectedLink = versions[currentVersion][e.target.value];
+        nextBtn.classList.remove("opacity-50", "cursor-not-allowed");
+      });
+    });
 
     nextBtn.addEventListener("click", () => {
-      const formData = new FormData(document.getElementById("downloadForm"));
-      const mirror = formData.get("mirror");
-      if (!mirror) return;
-      const url = currentVersion.links[mirror];
-      dialog.innerHTML = `
-        <div class="center">
+      if (!selectedLink) return;
+      popupCard.innerHTML = `
+        <div class="text-center p-6">
           <div class="checkmark">✔</div>
-          <p>即将在 <span id="countdown">3</span> 秒后跳转...</p>
+          <p class="mt-4">即将在 <span id="countdown">3</span> 秒后跳转...</p>
         </div>
       `;
-      let seconds = 3;
+      let sec = 3;
       const timer = setInterval(() => {
-        seconds--;
-        document.getElementById("countdown").textContent = seconds;
-        if (seconds === 0) {
+        sec--;
+        document.getElementById("countdown").textContent = sec;
+        if (sec === 0) {
           clearInterval(timer);
-          window.location.href = url;
+          window.location.href = selectedLink;
         }
       }, 1000);
     });
+
+    function resetPopup() {
+      popupCard.innerHTML = `
+        <div class="flex justify-between mb-4">
+          <button id="backBtn" class="text-blue-600 hover:underline">返回</button>
+          <button id="nextBtn" class="text-blue-600 hover:underline opacity-50 cursor-not-allowed">下一步</button>
+        </div>
+        <h2 class="text-xl font-semibold mb-4">选择下载线路</h2>
+        <div class="space-y-3" id="mirrorOptions">
+          <label class="flex items-center space-x-2">
+            <input type="radio" name="mirror" value="cn" class="accent-blue-600">
+            <span>国内网盘</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="radio" name="mirror" value="google" class="accent-blue-600">
+            <span>Google 云盘</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="radio" name="mirror" value="backup" class="accent-blue-600">
+            <span>备用链接</span>
+          </label>
+        </div>
+      `;
+      // 重新绑定事件
+      document.getElementById("backBtn").addEventListener("click", () => popup.classList.add("hidden"));
+      const next = document.getElementById("nextBtn");
+      document.querySelectorAll("input[name=mirror]").forEach(radio => {
+        radio.addEventListener("change", e => {
+          selectedLink = versions[currentVersion][e.target.value];
+          next.classList.remove("opacity-50", "cursor-not-allowed");
+        });
+      });
+      next.addEventListener("click", () => {
+        if (!selectedLink) return;
+        popupCard.innerHTML = `
+          <div class="text-center p-6">
+            <div class="checkmark">✔</div>
+            <p class="mt-4">即将在 <span id="countdown">3</span> 秒后跳转...</p>
+          </div>
+        `;
+        let sec = 3;
+        const timer = setInterval(() => {
+          sec--;
+          document.getElementById("countdown").textContent = sec;
+          if (sec === 0) {
+            clearInterval(timer);
+            window.location.href = selectedLink;
+          }
+        }, 1000);
+      });
+    }
   </script>
 </body>
 </html>
