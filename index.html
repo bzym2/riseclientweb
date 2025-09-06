@@ -1,431 +1,158 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>上升客户端下载 — 极致版</title>
-
-  <!-- Tailwind -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上升客户端下载</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
-    /* 背景粒子画布占位 */
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    /* 毛玻璃卡片的半透明白（深色背景下好看） */
     .glass {
-      backdrop-filter: blur(12px) saturate(120%);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
-    /* 呼吸发光效果 */
-    .glow {
-      box-shadow: 0 6px 30px rgba(99,102,241,0.28), inset 0 -6px 30px rgba(236,72,153,0.06);
-      transition: box-shadow .35s, transform .18s;
-    }
-    /* 按钮点击 ripple 的容器 */
     .ripple {
       position: relative;
       overflow: hidden;
     }
-    .ripple span {
+    .ripple::after {
+      content: "";
       position: absolute;
-      border-radius: 9999px;
-      transform: translate(-50%, -50%) scale(0);
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      top: 50%;
+      left: 50%;
+      background: rgba(255,255,255,0.4);
+      transform: scale(0);
+      opacity: 0;
       pointer-events: none;
-      opacity: .6;
-      background: rgba(255,255,255,0.35);
-      width: 10px; height: 10px;
-      transition: transform .6s cubic-bezier(.2,.8,.2,1), opacity .6s;
     }
-    /* 卡片 hover 3D */
-    .tilt { transform-style: preserve-3d; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
-    /* SVG check initial style */
-    .check-svg { width: 96px; height: 96px; stroke: #0ea5a8; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .ripple:active::after {
+      transform: scale(3);
+      opacity: 1;
+      transition: transform 0.6s, opacity 1s;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%) scale(0);
+    }
   </style>
 </head>
-<body class="min-h-screen antialiased text-white relative overflow-x-hidden" style="background:linear-gradient(120deg,#0ea5f6,#7c3aed,#ec4899);">
+<body class="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white min-h-screen flex flex-col justify-center items-center p-6">
 
-  <!-- 粒子canvas（在页面最底） -->
-  <canvas id="bg-canvas"></canvas>
-
-  <!-- 顶部 logo & 标题 -->
-  <header class="relative z-20 py-8 flex flex-col items-center">
-    <img src="https://proxy.bzym.fun/https://riseclient.com/images/rise.png" alt="Rise" class="h-20 mb-4 drop-shadow-2xl transform" id="logo">
-    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-lg">上升客户端 · 最新最热下载</h1>
-    <p class="mt-2 text-sm text-white/80">只留 Google 云盘，干净利落。设计稍微别太烂吧？我也这么想。</p>
+  <!-- Header -->
+  <header class="mb-10 text-center">
+    <img src="https://proxy.bzym.fun/https://riseclient.com/images/rise.png" alt="Logo" class="h-20 mx-auto mb-4 animate-bounce">
+    <h1 class="text-4xl font-bold mb-2 drop-shadow-lg">上升客户端最新最热下载</h1>
+    <p class="text-lg opacity-90">破解来源于: nespola cheats</p>
   </header>
 
-  <!-- 内容容器 -->
-  <main class="relative z-20 max-w-6xl mx-auto px-6 pb-16">
-    <section class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-
-      <!-- 左栏：最新版卡片（固定显眼） -->
-      <div class="lg:col-span-2">
-        <div id="latestCard" class="glass rounded-3xl p-6 lg:p-8 tilt transform-gpu shadow-2xl">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <div class="inline-flex items-center space-x-3">
-                <span class="px-3 py-1 bg-white/8 rounded-full text-sm font-medium">最新</span>
-                <h2 id="latestVersion" class="text-2xl md:text-3xl font-bold tracking-tight">6.6.5</h2>
-              </div>
-              <p id="latestDate" class="mt-2 text-sm text-white/80">发行日子：2025-07-18</p>
-              <p class="mt-4 text-sm text-white/70 max-w-xl">说明：内置多项优化与修复，Google 云盘为首选下载线路，其他线路已关闭以保持下载体验的一致性。</p>
-            </div>
-
-            <div class="flex items-center space-x-4">
-              <!-- 大尺寸渐变按钮：对角渐变，角度与颜色更“高级” -->
-              <button id="downloadLatest" class="ripple relative overflow-hidden px-6 py-3 rounded-2xl text-white font-semibold shadow-glow transform-gpu glow"
-                style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 40%, #ec4899 100%);">
-                <span class="relative z-10">下载 · Google 云盘</span>
-              </button>
-              <!-- 小按钮：镜像/说明（可扩展） -->
-              <button id="moreBtn" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/12 text-sm">更多</button>
-            </div>
-          </div>
-
-          <!-- 下面加一排浮动信息小卡（进场动画） -->
-          <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="bg-white/5 p-3 rounded-lg text-sm">
-              <div class="text-xs text-white/80">版本大小</div>
-              <div class="font-medium mt-1">28.7 MB</div>
-            </div>
-            <div class="bg-white/5 p-3 rounded-lg text-sm">
-              <div class="text-xs text-white/80">兼容性</div>
-              <div class="font-medium mt-1">Android 9+</div>
-            </div>
-            <div class="bg-white/5 p-3 rounded-lg text-sm">
-              <div class="text-xs text-white/80">签名</div>
-              <div class="font-medium mt-1">SHA256 ✓</div>
-            </div>
-            <div class="bg-white/5 p-3 rounded-lg text-sm">
-              <div class="text-xs text-white/80">更新</div>
-              <div class="font-medium mt-1">修复若干崩溃</div>
-            </div>
-          </div>
+  <!-- Latest -->
+  <main class="w-full max-w-3xl space-y-8">
+    <section class="glass p-6 rounded-2xl shadow-2xl">
+      <h2 class="text-2xl font-semibold mb-4">最新版本</h2>
+      <div class="flex items-center justify-between bg-white/20 p-6 rounded-xl">
+        <div>
+          <p class="font-medium text-xl">6.6.5</p>
+          <p class="text-sm">发行日子：2025-07-18</p>
         </div>
+        <button onclick="openPopup('6.6.5')"
+          class="ripple bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition transform">
+          下载
+        </button>
+      </div>
+    </section>
 
-        <!-- 历史版本横向滑动区域（可拖动） -->
-        <div class="mt-6">
-          <h3 class="text-white/90 mb-3 font-semibold">历史版本</h3>
-          <div id="historyScroll" class="flex gap-4 overflow-x-auto pb-3 scroll-smooth">
-            <!-- 历史卡片由 JS 填充 -->
-          </div>
+    <!-- History -->
+    <section class="glass p-6 rounded-2xl shadow-2xl">
+      <h2 class="text-2xl font-semibold mb-4">历史版本</h2>
+      <div class="flex space-x-4 overflow-x-auto pb-4">
+        <div class="min-w-[200px] bg-white/20 p-4 rounded-xl">
+          <p class="font-medium">6.6.4 R3</p>
+          <p class="text-sm">2025-07-10</p>
+          <button onclick="openPopup('6.6.4 R3')" class="mt-3 bg-gray-500 text-white px-4 py-2 rounded-lg">下载</button>
+        </div>
+        <div class="min-w-[200px] bg-white/20 p-4 rounded-xl">
+          <p class="font-medium">6.6.4</p>
+          <p class="text-sm">2025-07-03</p>
+          <button onclick="openPopup('6.6.4')" class="mt-3 bg-gray-500 text-white px-4 py-2 rounded-lg">下载</button>
+        </div>
+        <div class="min-w-[200px] bg-white/20 p-4 rounded-xl">
+          <p class="font-medium">6.6.2</p>
+          <p class="text-sm">2025-07-02</p>
+          <button onclick="openPopup('6.6.2')" class="mt-3 bg-gray-500 text-white px-4 py-2 rounded-lg">下载</button>
         </div>
       </div>
-
-      <!-- 右侧：细节/行动栏 -->
-      <aside class="space-y-6">
-        <div class="glass rounded-2xl p-5 tilt shadow-lg">
-          <h4 class="font-semibold">下载助手</h4>
-          <p class="mt-2 text-sm text-white/80">点击「下载 · Google 云盘」，选择云盘，确认后会在 3 秒内跳转。</p>
-          <div class="mt-4">
-            <button id="quickDownload" class="w-full ripple px-4 py-2 rounded-xl text-sm font-medium" style="background: linear-gradient(90deg,#06b6d4,#06b6d4); color:#042f3e;">一键下载</button>
-          </div>
-        </div>
-
-        <div class="glass rounded-2xl p-5 tilt shadow-lg">
-          <h4 class="font-semibold">说明</h4>
-          <p class="mt-2 text-sm text-white/80">为简化流程，本页面仅提供 Google 云盘下载线路。若需备份链接，请在仓库内查看。</p>
-        </div>
-      </aside>
-
     </section>
   </main>
 
-  <!-- 居中 Popup（白色卡片） -->
-  <div id="popup" class="fixed inset-0 z-40 hidden items-center justify-center">
-    <div id="overlay" class="absolute inset-0 bg-black/50"></div>
-    <div id="popupCard" class="relative bg-white rounded-2xl w-[92%] max-w-md p-6 shadow-2xl">
-      <!-- 顶部返回/下一步 -->
-      <div class="flex justify-between items-center mb-4">
-        <button id="popupBack" class="text-sky-600 hover:underline">返回</button>
-        <div class="text-sm font-semibold">选择下载线路</div>
-        <button id="popupNext" class="text-sky-600 opacity-60 cursor-not-allowed">下一步</button>
-      </div>
+  <!-- Footer -->
+  <footer class="mt-10 text-center text-sm opacity-80">
+    <p>&copy; Github: github.com/bzym2/riseclientweb</p>
+  </footer>
 
-      <!-- 内容区域：只有 Google 云盘 -->
-      <div id="popupContent" class="space-y-4">
-        <div class="p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7l3-7z"/>
-          </svg>
-          <div>
-            <div class="font-medium">Google 云盘</div>
-            <div id="gdrivePreview" class="text-sm text-slate-500">drive.google.com/.../fileid</div>
-          </div>
-          <div class="ml-auto">
-            <label class="inline-flex items-center cursor-pointer">
-              <input id="gdriveRadio" type="radio" name="mirror" checked class="accent-sky-600">
-            </label>
-          </div>
-        </div>
-
-        <p class="text-sm text-slate-500">只有 Google 云盘可用 —— 直接选中后点击「下一步」。</p>
-      </div>
-
-      <!-- 成功区（隐藏，显示对勾动画与倒计时） -->
-      <div id="popupSuccess" class="hidden text-center p-4">
-        <svg class="check-svg mx-auto mb-3" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-          <path id="circlePath" d="M26 4a22 22 0 1 1 0 44 22 22 0 0 1 0-44" stroke="#0ea5a8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          <path id="checkPath" d="M16 27l7 7 13-14" stroke="#0ea5a8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
-        <div class="text-slate-700 font-medium" id="successText">将在 <span id="countdown">3</span> 秒后跳转到 Google 云盘</div>
+  <!-- Popup -->
+  <div id="popup" class="fixed inset-0 bg-black/50 hidden justify-center items-center z-50">
+    <div class="glass bg-white/70 text-black rounded-2xl p-6 w-80 relative shadow-2xl">
+      <button onclick="closePopup()" class="absolute top-3 left-4 text-blue-600 hover:underline">返回</button>
+      <button id="nextBtn" onclick="startDownload()" class="absolute top-3 right-4 text-gray-400" disabled>下一步</button>
+      <h3 class="text-xl font-semibold mb-6 text-center">选择下载线路</h3>
+      <div class="space-y-4">
+        <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
+          <input type="radio" name="line" value="https://drive.google.com" onchange="enableNext()" class="w-5 h-5 text-blue-600">
+          <span>Google 云盘</span>
+        </label>
       </div>
     </div>
   </div>
 
-  <!-- JS：数据 + 交互 + 动画 -->
+  <!-- Success -->
+  <div id="success" class="fixed inset-0 bg-black/70 hidden justify-center items-center z-50">
+    <div class="bg-white text-black rounded-2xl p-8 w-80 flex flex-col items-center shadow-2xl">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+      <p class="text-lg font-medium mb-2">即将在 <span id="countdown">3</span> 秒后跳转</p>
+    </div>
+  </div>
+
   <script>
-    // ====== 数据：版本与 Google Drive 链接（方便替换） ======
-    const downloads = [
-      { version: "6.6.5", date: "2025-07-18", google: "https://drive.google.com/file/d/1_wU0nKw7_E21-bmk61SEJ7O3ayoZNIQz/view?usp=sharing", latest: true },
-      { version: "6.6.4 R3", date: "2025-07-10", google: "https://drive.google.com/file/d/1cFGmYFroJbEDAbh8l8Gd1DAvABxgPk8Z/view?usp=sharing" },
-      { version: "6.6.4", date: "2025-07-03", google: "https://drive.google.com/file/d/1sAXB7M9P3gvtNGodxSWn_VU_x86_PUxS/view?usp=sharing" },
-      { version: "6.6.2", date: "2025-07-02", google: "https://drive.google.com/file/d/1oqXfv2cj4TGqljEQHpsl9RSi5qCf3j3a/view?usp=sharing" }
-    ];
+    let selectedLine = null;
 
-    // ====== 渲染历史卡片到横向滚动区 ======
-    const historyScroll = document.getElementById('historyScroll');
-    downloads.slice(1).forEach(d => {
-      const card = document.createElement('div');
-      card.className = 'min-w-[220px] bg-white/6 rounded-2xl p-4 tilt glass shadow-md flex flex-col';
-      card.innerHTML = `
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm text-white/80">版本</div>
-            <div class="font-semibold mt-1">${d.version}</div>
-            <div class="text-xs text-white/70 mt-1">${d.date}</div>
-          </div>
-        </div>
-        <div class="mt-4 flex items-center gap-3">
-          <button class="old-download flex-1 bg-gray-600/80 text-white py-2 rounded-lg text-sm">历史下载</button>
-        </div>
-      `;
-      historyScroll.appendChild(card);
-
-      // small hover tilt for each history card
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = `rotateX(${ -y * 5 }deg) rotateY(${ x * 5 }deg) translateZ(0)`;
-      });
-      card.addEventListener('mouseleave', () => card.style.transform = '');
-    });
-
-    // ====== 动画入口：logo + cards fade-in ======
-    gsap.from("#logo", { duration: 0.8, scale: 0.9, opacity: 0, ease: "power2.out" });
-    gsap.from("#latestCard", { duration: 0.9, y: 20, opacity: 0, ease: "back.out(1.2)", delay: 0.15 });
-    gsap.from(".glass > .tilt, .glass .p-3", { duration: 0.8, y: 10, opacity: 0, stagger: 0.08, delay: 0.25 });
-
-    // hover tilt for the main latest card
-    const latestCard = document.getElementById('latestCard');
-    latestCard.addEventListener('mousemove', (e) => {
-      const rect = latestCard.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      latestCard.style.transform = `perspective(800px) rotateX(${ -y * 6 }deg) rotateY(${ x * 6 }deg) translateZ(0)`;
-    });
-    latestCard.addEventListener('mouseleave', () => latestCard.style.transform = '');
-
-    // ====== ripple 效果 for .ripple buttons ======
-    function createRipple(e) {
-      const btn = e.currentTarget;
-      const span = document.createElement('span');
-      btn.appendChild(span);
-      const rect = btn.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height) * 1.6;
-      span.style.width = span.style.height = size + 'px';
-      span.style.left = (e.clientX - rect.left) + 'px';
-      span.style.top = (e.clientY - rect.top) + 'px';
-      // animate
-      requestAnimationFrame(() => span.style.transform = 'translate(-50%,-50%) scale(1)');
-      span.style.opacity = '0';
-      setTimeout(() => span.remove(), 650);
-    }
-    document.querySelectorAll('.ripple').forEach(b => b.addEventListener('click', createRipple));
-
-    // ====== Popup 控制 & 动画 ======
-    const popup = document.getElementById('popup');
-    const overlay = document.getElementById('overlay');
-    const popupCard = document.getElementById('popupCard');
-    const popupNext = document.getElementById('popupNext');
-    const popupBack = document.getElementById('popupBack');
-    const gdriveRadio = document.getElementById('gdriveRadio');
-    const gdrivePreview = document.getElementById('gdrivePreview');
-    const popupContent = document.getElementById('popupContent');
-    const popupSuccess = document.getElementById('popupSuccess');
-    const successText = document.getElementById('successText');
-    const countdownEl = document.getElementById('countdown');
-    let selectedLink = null;
-    let activeVersion = downloads[0]; // 默认最新
-
-    // fill preview link
-    function setPreview(versionObj) {
-      const url = versionObj.google;
-      gdrivePreview.textContent = url.replace(/^https?:\/\//, '');
-      selectedLink = url;
-    }
-    setPreview(activeVersion);
-
-    // open popup
-    function openPopup(versionObj) {
-      activeVersion = versionObj;
-      setPreview(versionObj);
-      // reset states
-      popupContent.classList.remove('hidden');
-      popupSuccess.classList.add('hidden');
-      popupNext.classList.add('opacity-60', 'cursor-not-allowed');
-      popupNext.disabled = false; // remain clickable (since only one option) but visually disabled until small delay
-      // show container
-      popup.classList.remove('hidden');
-      // animate: overlay fade + popup drop-in
-      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 0.5, duration: 0.25 });
-      gsap.fromTo(popupCard, { y: -30, scale: 0.98, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.2)" });
-      // small delay then enable next (mimic selection)
-      setTimeout(() => {
-        popupNext.classList.remove('opacity-60', 'cursor-not-allowed');
-      }, 220);
+    function openPopup(version) {
+      document.getElementById('popup').classList.remove('hidden');
+      gsap.fromTo('#popup .glass', {scale:0.8, opacity:0}, {scale:1, opacity:1, duration:0.4, ease:"back.out(1.7)"});
     }
 
-    // close popup
     function closePopup() {
-      gsap.to(popupCard, { y: -10, scale: 0.98, opacity: 0, duration: 0.18 });
-      gsap.to(overlay, { opacity: 0, duration: 0.18, onComplete: () => popup.classList.add('hidden') });
+      gsap.to('#popup .glass', {scale:0.8, opacity:0, duration:0.3, onComplete:()=>{
+        document.getElementById('popup').classList.add('hidden');
+      }});
     }
 
-    // bind main buttons
-    document.getElementById('downloadLatest').addEventListener('click', (e) => {
-      openPopup(downloads[0]);
-    });
-    document.getElementById('quickDownload').addEventListener('click', () => openPopup(downloads[0]));
+    function enableNext() {
+      selectedLine = document.querySelector('input[name="line"]:checked').value;
+      const nextBtn = document.getElementById('nextBtn');
+      nextBtn.disabled = false;
+      nextBtn.classList.remove('text-gray-400');
+      nextBtn.classList.add('text-blue-600','hover:underline');
+    }
 
-    // back button
-    popupBack.addEventListener('click', closePopup);
-
-    // Next button: play check animation + countdown + redirect
-    popupNext.addEventListener('click', () => {
-      // hide content, show success
-      popupContent.classList.add('hidden');
-      popupSuccess.classList.remove('hidden');
-
-      // animate SVG paths (stroke-dasharray technique)
-      const circle = document.getElementById('circlePath');
-      const check = document.getElementById('checkPath');
-      // prepare
-      const circleLen = circle.getTotalLength();
-      const checkLen = check.getTotalLength();
-      circle.style.strokeDasharray = circleLen;
-      circle.style.strokeDashoffset = circleLen;
-      check.style.strokeDasharray = checkLen;
-      check.style.strokeDashoffset = checkLen;
-      // timeline
-      const tl = gsap.timeline();
-      tl.to(circle, { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" });
-      tl.to(check, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" }, "-=0.12");
-      tl.fromTo('#popupSuccess .check-svg', { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4 }, "-=0.3");
-
-      // countdown & redirect
-      let sec = 3;
-      countdownEl.textContent = sec;
-      const countdown = setInterval(() => {
-        sec--;
-        countdownEl.textContent = sec;
-        if (sec <= 0) {
-          clearInterval(countdown);
-          // jump to google drive
-          window.location.href = selectedLink;
+    function startDownload() {
+      document.getElementById('popup').classList.add('hidden');
+      document.getElementById('success').classList.remove('hidden');
+      let count = 3;
+      const countdownEl = document.getElementById('countdown');
+      const timer = setInterval(()=>{
+        count--;
+        countdownEl.textContent = count;
+        if(count===0){
+          clearInterval(timer);
+          window.location.href = selectedLine;
         }
-      }, 1000);
-    });
-
-    // close if clicking outside card
-    overlay.addEventListener('click', closePopup);
-
-    // ====== background particles (canvas) driven by GSAP tick ======
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let DPR = Math.max(1, window.devicePixelRatio || 1);
-    function resizeCanvas(){
-      DPR = Math.max(1, window.devicePixelRatio || 1);
-      canvas.width = innerWidth * DPR;
-      canvas.height = innerHeight * DPR;
-      canvas.style.width = innerWidth + 'px';
-      canvas.style.height = innerHeight + 'px';
-      ctx.scale(DPR, DPR);
+      },1000);
     }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // generate particles
-    const particles = [];
-    const PCOUNT = Math.max(24, Math.floor((innerWidth * innerHeight) / 90000));
-    for (let i = 0; i < PCOUNT; i++) {
-      particles.push({
-        x: Math.random() * innerWidth,
-        y: Math.random() * innerHeight,
-        r: 0.8 + Math.random() * 2.5,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.2,
-        hue: 180 + Math.random() * 160,
-        alpha: 0.08 + Math.random() * 0.18
-      });
-    }
-
-    function drawParticles() {
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      particles.forEach(p => {
-        ctx.beginPath();
-        const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 6);
-        grd.addColorStop(0, `hsla(${p.hue}, 85%, 60%, ${p.alpha})`);
-        grd.addColorStop(0.5, `hsla(${p.hue}, 85%, 50%, ${p.alpha * 0.65})`);
-        grd.addColorStop(1, `hsla(${p.hue}, 85%, 40%, 0)`);
-        ctx.fillStyle = grd;
-        ctx.arc(p.x, p.y, p.r * 6, 0, Math.PI * 2);
-        ctx.fill();
-        // move
-        p.x += p.vx;
-        p.y += p.vy;
-        // wrap
-        if (p.x < -50) p.x = innerWidth + 50;
-        if (p.x > innerWidth + 50) p.x = -50;
-        if (p.y < -50) p.y = innerHeight + 50;
-        if (p.y > innerHeight + 50) p.y = -50;
-      });
-      requestAnimationFrame(drawParticles);
-    }
-    drawParticles();
-
-    // keyboard escape to close popup
-    window.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape' && !popup.classList.contains('hidden')) closePopup();
-    });
-
-    // small accessibility tweak: tap history scroll left/right by drag on mobile
-    let isDown = false, startX, scrollLeft;
-    const slider = document.getElementById('historyScroll');
-    slider.addEventListener('mousedown', (e) => {
-      isDown = true; slider.classList.add('cursor-grabbing');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('cursor-grabbing'); });
-    slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('cursor-grabbing'); });
-    slider.addEventListener('mousemove', (e) => {
-      if(!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 1.2;
-      slider.scrollLeft = scrollLeft - walk;
-    });
-
-    // prevent accidental text selection while dragging
-    slider.addEventListener('selectstart', (e) => { if(isDown) e.preventDefault(); });
-
-    // initial small micro-animations to keep the page alive
-    gsap.to('.glow', { boxShadow: "0 12px 40px rgba(124,58,237,0.32), inset 0 -8px 30px rgba(236,72,153,0.06)", duration: 2.8, repeat: -1, yoyo: true });
   </script>
 </body>
 </html>
