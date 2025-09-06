@@ -4,229 +4,182 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>上升客户端最新最热下载</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* popup 动画 */
-    #popup.show #popup-content {
-      transform: scale(1);
-      opacity: 1;
-    }
-    #popup.hide #popup-content {
-      transform: scale(0.9);
-      opacity: 0;
-    }
 
-    /* 对勾动画 */
-    .checkmark {
-      width: 72px;
-      height: 72px;
-      stroke-width: 2;
-      stroke: #4CAF50;
-      stroke-miterlimit: 10;
-      box-shadow: inset 0px 0px 0px #4CAF50;
-      border-radius: 50%;
-      display: block;
-      margin: 20px auto;
+  <!-- Tailwind 用于布局 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Material Web Components -->
+  <script type="module" src="https://esm.run/@material/web/all.js"></script>
+  <link rel="stylesheet" href="https://esm.run/@material/web/all.css">
+
+  <style>
+    body {
+      font-family: 'Roboto', 'Noto Sans SC', sans-serif;
     }
-    .checkmark__circle {
-      stroke-dasharray: 166;
-      stroke-dashoffset: 166;
-      stroke-width: 2;
-      stroke-miterlimit: 10;
-      stroke: #4CAF50;
-      fill: none;
-      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    .gradient-btn {
+      background: linear-gradient(135deg, #4f46e5, #9333ea, #ec4899);
+      background-size: 300% 300%;
+      animation: gradientMove 4s ease infinite;
     }
-    .checkmark__check {
-      transform-origin: 50% 50%;
-      stroke-dasharray: 48;
-      stroke-dashoffset: 48;
-      animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
-    }
-    @keyframes stroke {
-      100% {
-        stroke-dashoffset: 0;
-      }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white min-h-screen flex flex-col justify-center items-center p-6">
+<body class="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white min-h-screen flex flex-col items-center p-6">
 
-  <!-- Header -->
-  <header class="mb-8 text-center">
-    <img src="https://proxy.bzym.fun/https://riseclient.com/images/rise.png" alt="Logo" class="h-20 mx-auto mb-4 drop-shadow-xl">
-    <h1 class="text-4xl font-bold mb-2">上升客户端最新最热下载</h1>
-    <p class="text-lg opacity-80">破解来源于: nespola cheats.</p>
+  <!-- Logo & 标题 -->
+  <header class="text-center mb-8">
+    <img src="https://proxy.bzym.fun/https://riseclient.com/images/rise.png" alt="Logo" class="h-20 mx-auto mb-4">
+    <h1 class="text-4xl font-bold">上升客户端最新最热下载</h1>
+    <p class="text-lg mt-2">破解来源于: nespola cheats.</p>
   </header>
 
-  <!-- Main -->
-  <main class="glass w-full max-w-2xl">
-    <div id="version-list"></div>
+  <!-- 内容卡片 -->
+  <main class="glass w-full max-w-2xl p-6 rounded-2xl shadow-lg bg-white bg-opacity-20">
+    <section class="mb-6">
+      <h2 class="text-2xl font-semibold mb-4">最新最热</h2>
+      <div class="flex items-center justify-between p-4 rounded-lg bg-white bg-opacity-20">
+        <div>
+          <p class="font-medium">6.6.5</p>
+          <p class="text-sm">发行日子：2025-07-18</p>
+        </div>
+        <button 
+          class="gradient-btn text-white py-2 px-4 rounded-lg shadow-lg transition"
+          onclick="openDialog('6.6.5')">
+          下载
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">老安卓</h2>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between p-4 rounded-lg bg-white bg-opacity-20">
+          <div>
+            <p class="font-medium">6.6.4 R3</p>
+            <p class="text-sm">发行日子：2025-07-10</p>
+          </div>
+          <button class="bg-gray-600 text-white py-2 px-4 rounded-lg cursor-pointer" onclick="openDialog('6.6.4 R3')">下载</button>
+        </div>
+        <div class="flex items-center justify-between p-4 rounded-lg bg-white bg-opacity-20">
+          <div>
+            <p class="font-medium">6.6.4</p>
+            <p class="text-sm">发行日子：2025-07-03</p>
+          </div>
+          <button class="bg-gray-600 text-white py-2 px-4 rounded-lg cursor-pointer" onclick="openDialog('6.6.4')">下载</button>
+        </div>
+        <div class="flex items-center justify-between p-4 rounded-lg bg-white bg-opacity-20">
+          <div>
+            <p class="font-medium">6.6.2</p>
+            <p class="text-sm">发行日子：2025-07-02</p>
+          </div>
+          <button class="bg-gray-600 text-white py-2 px-4 rounded-lg cursor-pointer" onclick="openDialog('6.6.2')">下载</button>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="mt-10 text-center text-sm opacity-70">
+  <footer class="mt-6 text-center text-sm">
     <p>&copy; Github: github.com/bzym2/riseclientweb</p>
   </footer>
 
-  <!-- Popup -->
-  <div id="popup" class="fixed inset-0 bg-black bg-opacity-40 hidden justify-center items-center z-50">
-    <div id="popup-content"
-      class="bg-white rounded-3xl shadow-2xl w-96 max-w-[90%] transform scale-95 opacity-0 transition-all duration-300">
-
-      <!-- 顶部导航栏 -->
-      <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200">
-        <button id="back-btn" class="text-[#007AFF] hover:text-blue-400 font-medium">返回</button>
-        <span class="font-semibold">选择下载线路</span>
-        <button id="next-btn" disabled class="text-[#007AFF] opacity-50 font-medium">下一步</button>
-      </div>
-
-      <!-- 线路选择 -->
-      <div id="line-options" class="divide-y divide-gray-200"></div>
-
-      <!-- 成功提示 -->
-      <div id="success" class="hidden text-center p-6">
-        <svg class="checkmark mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-          <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-          <path class="checkmark__check" fill="none" d="M14 27l7 7 16-16"/>
-        </svg>
-        <p id="redirect-msg" class="mt-3 text-gray-600"></p>
-      </div>
+  <!-- Material You 弹窗 -->
+  <md-dialog id="downloadDialog">
+    <div slot="headline">选择下载线路</div>
+    <div slot="content">
+      <p id="selectedVersion" class="mb-3 text-gray-800"></p>
+      <md-radio-group id="lineSelect">
+        <md-radio value="国内网盘">国内网盘</md-radio><br>
+        <md-radio value="Google 云盘">Google 云盘</md-radio><br>
+        <md-radio value="备用链接">备用链接</md-radio>
+      </md-radio-group>
     </div>
-  </div>
+    <div slot="actions" class="flex justify-between w-full">
+      <md-text-button onclick="closeDialog()">返回</md-text-button>
+      <md-text-button id="nextBtn" disabled onclick="confirmDownload()">下一步</md-text-button>
+    </div>
+  </md-dialog>
+
+  <!-- 对勾动画 + 倒计时 -->
+  <md-dialog id="successDialog">
+    <div slot="headline">准备跳转</div>
+    <div slot="content" class="flex flex-col items-center">
+      <svg class="w-16 h-16 text-green-500 mb-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
+      <p id="countdownText" class="text-gray-700"></p>
+    </div>
+  </md-dialog>
 
   <script>
-    const downloads = [
-      {
-        version: "6.6.5",
-        date: "2025-07-18",
-        latest: true,
-        links: {
-          cn: "https://pan.baidu.com/s/xxxx",
-          gdrive: "https://drive.google.com/file/d/1_wU0nKw7/view",
-          backup: "https://example.com/backup665"
-        }
+    const versions = {
+      "6.6.5": {
+        "国内网盘": "https://example.com/cn/665",
+        "Google 云盘": "https://drive.google.com/file/d/1_wU0nKw7_E21-bmk61SEJ7O3ayoZNIQz/view?usp=sharing",
+        "备用链接": "https://example.com/mirror/665"
       },
-      {
-        version: "6.6.4 R3",
-        date: "2025-07-10",
-        latest: false,
-        links: {
-          cn: "https://pan.baidu.com/s/yyyy",
-          gdrive: "https://drive.google.com/file/d/1cFGmYFro/view",
-          backup: "https://example.com/backup664r3"
-        }
+      "6.6.4 R3": {
+        "国内网盘": "https://example.com/cn/664r3",
+        "Google 云盘": "https://drive.google.com/file/d/1cFGmYFroJbEDAbh8l8Gd1DAvABxgPk8Z/view?usp=sharing",
+        "备用链接": "https://example.com/mirror/664r3"
       },
-      {
-        version: "6.6.4",
-        date: "2025-07-03",
-        latest: false,
-        links: {
-          cn: "https://pan.baidu.com/s/zzzz",
-          gdrive: "https://drive.google.com/file/d/1sAXB7M9/view",
-          backup: "https://example.com/backup664"
-        }
+      "6.6.4": {
+        "国内网盘": "https://example.com/cn/664",
+        "Google 云盘": "https://drive.google.com/file/d/1sAXB7M9P3gvtNGodxSWn_VU_x86_PUxS/view?usp=sharing",
+        "备用链接": "https://example.com/mirror/664"
+      },
+      "6.6.2": {
+        "国内网盘": "https://example.com/cn/662",
+        "Google 云盘": "https://drive.google.com/file/d/1oqXfv2cj4TGqljEQHpsl9RSi5qCf3j3a/view?usp=sharing",
+        "备用链接": "https://example.com/mirror/662"
       }
-    ];
+    };
 
-    const versionList = document.getElementById("version-list");
-    const popup = document.getElementById("popup");
-    const popupContent = document.getElementById("popup-content");
-    const lineOptions = document.getElementById("line-options");
-    const nextBtn = document.getElementById("next-btn");
-    const backBtn = document.getElementById("back-btn");
-    const success = document.getElementById("success");
-    const redirectMsg = document.getElementById("redirect-msg");
-
-    let currentLinks = null;
+    let currentVersion = null;
     let selectedLine = null;
 
-    // 生成版本列表
-    downloads.forEach(d => {
-      const item = document.createElement("div");
-      item.className = "flex items-center justify-between bg-white bg-opacity-10 p-5 rounded-2xl mb-4";
+    const dialog = document.getElementById("downloadDialog");
+    const successDialog = document.getElementById("successDialog");
+    const lineSelect = document.getElementById("lineSelect");
+    const nextBtn = document.getElementById("nextBtn");
 
-      const btnClass = d.latest
-        ? "bg-gradient-to-tr from-indigo-500 to-blue-400 hover:scale-105 transition-all text-white py-2 px-5 rounded-xl shadow-lg"
-        : "bg-gray-600 text-gray-300 py-2 px-5 rounded-xl cursor-not-allowed";
+    function openDialog(version) {
+      currentVersion = version;
+      document.getElementById("selectedVersion").innerText = "版本：" + version;
+      lineSelect.value = "";
+      nextBtn.disabled = true;
+      dialog.show();
+    }
 
-      item.innerHTML = `
-        <div>
-          <p class="text-lg font-medium">${d.version}</p>
-          <p class="text-sm opacity-70">发行日子：${d.date}</p>
-        </div>
-        <button class="download-btn ${btnClass}" data-version="${d.version}" ${!d.latest ? "disabled" : ""}>
-          下载
-        </button>
-      `;
-      versionList.appendChild(item);
+    function closeDialog() {
+      dialog.close();
+    }
+
+    lineSelect.addEventListener("change", () => {
+      selectedLine = lineSelect.value;
+      nextBtn.disabled = !selectedLine;
     });
 
-    // 绑定下载按钮
-    document.querySelectorAll(".download-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const version = btn.dataset.version;
-        currentLinks = downloads.find(d => d.version === version).links;
-        selectedLine = null;
+    function confirmDownload() {
+      dialog.close();
+      successDialog.show();
+      let countdown = 3;
+      const url = versions[currentVersion][selectedLine];
+      const text = document.getElementById("countdownText");
 
-        lineOptions.innerHTML = "";
-        Object.entries({
-          cn: "国内网盘",
-          gdrive: "谷歌云盘",
-          backup: "备用链接"
-        }).forEach(([key, label]) => {
-          const opt = document.createElement("div");
-          opt.className = "px-4 py-3 cursor-pointer hover:bg-gray-100";
-          opt.textContent = label;
-          opt.addEventListener("click", () => {
-            selectedLine = key;
-            Array.from(lineOptions.children).forEach(c => c.classList.remove("bg-gray-100"));
-            opt.classList.add("bg-gray-100");
-            nextBtn.disabled = false;
-            nextBtn.classList.remove("opacity-50");
-          });
-          lineOptions.appendChild(opt);
-        });
-
-        success.classList.add("hidden");
-        lineOptions.classList.remove("hidden");
-        nextBtn.style.visibility = "visible";
-        backBtn.style.visibility = "visible";
-        nextBtn.disabled = true;
-        nextBtn.classList.add("opacity-50");
-
-        popup.classList.remove("hidden");
-        popup.classList.add("show");
-        popup.classList.remove("hide");
-      });
-    });
-
-    // 下一步
-    nextBtn.addEventListener("click", () => {
-      if (!selectedLine) return;
-      success.classList.remove("hidden");
-      lineOptions.classList.add("hidden");
-      nextBtn.style.visibility = "hidden";
-      backBtn.style.visibility = "hidden";
-
-      let sec = 3;
-      redirectMsg.textContent = `即将在 ${sec} 秒后跳转...`;
+      text.innerText = `将在 ${countdown} 秒后跳转...`;
       const timer = setInterval(() => {
-        sec--;
-        redirectMsg.textContent = `即将在 ${sec} 秒后跳转...`;
-        if (sec <= 0) {
+        countdown--;
+        if (countdown > 0) {
+          text.innerText = `将在 ${countdown} 秒后跳转...`;
+        } else {
           clearInterval(timer);
-          window.location.href = currentLinks[selectedLine];
+          window.location.href = url;
         }
       }, 1000);
-    });
-
-    // 返回
-    backBtn.addEventListener("click", () => {
-      popup.classList.remove("show");
-      popup.classList.add("hide");
-      setTimeout(() => popup.classList.add("hidden"), 300);
-    });
+    }
   </script>
 </body>
 </html>
