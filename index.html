@@ -1,54 +1,39 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>上升客户端下载</title>
+  <title>上升客户端最新最热下载</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background: linear-gradient(270deg, #3b82f6, #a855f7, #ec4899);
-      background-size: 600% 600%;
-      animation: gradientFlow 15s ease infinite;
+    /* popup 动画 */
+    #popup.show #popup-content {
+      transform: scale(1);
+      opacity: 1;
     }
-    @keyframes gradientFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .glass {
-      backdrop-filter: blur(16px);
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    .popup-enter {
+    #popup.hide #popup-content {
       transform: scale(0.9);
       opacity: 0;
     }
-    .popup-show {
-      transform: scale(1);
-      opacity: 1;
-      transition: all 0.3s ease;
-    }
-    /* Apple 对勾动画 */
+
+    /* 对勾动画 */
     .checkmark {
-      width: 56px;
-      height: 56px;
+      width: 72px;
+      height: 72px;
+      stroke-width: 2;
+      stroke: #4CAF50;
+      stroke-miterlimit: 10;
+      box-shadow: inset 0px 0px 0px #4CAF50;
       border-radius: 50%;
       display: block;
-      stroke-width: 2;
-      stroke: #4ade80;
-      stroke-miterlimit: 10;
-      margin: 10px auto;
-      box-shadow: inset 0px 0px 0px #4ade80;
-      animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+      margin: 20px auto;
     }
     .checkmark__circle {
       stroke-dasharray: 166;
       stroke-dashoffset: 166;
       stroke-width: 2;
       stroke-miterlimit: 10;
-      stroke: #4ade80;
+      stroke: #4CAF50;
       fill: none;
       animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
     }
@@ -56,69 +41,66 @@
       transform-origin: 50% 50%;
       stroke-dasharray: 48;
       stroke-dashoffset: 48;
-      animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards;
+      animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
     }
     @keyframes stroke {
-      100% { stroke-dashoffset: 0; }
-    }
-    @keyframes scale {
-      0%, 100% { transform: none; }
-      50% { transform: scale3d(1.1, 1.1, 1); }
-    }
-    @keyframes fill {
-      100% { box-shadow: inset 0px 0px 0px 30px #4ade80; }
+      100% {
+        stroke-dashoffset: 0;
+      }
     }
   </style>
 </head>
-<body class="text-white min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white min-h-screen flex flex-col justify-center items-center p-6">
 
-  <!-- Hero -->
-  <section class="flex flex-col justify-center items-center flex-1 text-center p-6 space-y-6">
-    <img src="https://proxy.bzym.fun/https://riseclient.com/images/rise.png" alt="Logo" 
-         class="h-28 drop-shadow-2xl hover:scale-110 transition-transform duration-700">
-    <h1 class="text-6xl md:text-7xl font-extrabold tracking-wide bg-gradient-to-r from-pink-400 via-purple-300 to-blue-400 bg-clip-text text-transparent">
-      上升客户端
-    </h1>
-    <p class="text-lg opacity-90">破解来源于: nespola cheats</p>
-  </section>
+  <!-- Header -->
+  <header class="mb-8 text-center">
+    <img src="https://proxy.bzym.fun/https://riseclient.com/images/rise.png" alt="Logo" class="h-20 mx-auto mb-4 drop-shadow-xl">
+    <h1 class="text-4xl font-bold mb-2">上升客户端最新最热下载</h1>
+    <p class="text-lg opacity-80">破解来源于: nespola cheats.</p>
+  </header>
 
-  <!-- 下载区 -->
-  <section class="glass mx-auto max-w-3xl w-full rounded-3xl p-8 space-y-6">
-    <h2 class="text-3xl font-semibold">版本列表</h2>
-    <div id="version-list" class="space-y-4"></div>
-  </section>
+  <!-- Main -->
+  <main class="glass w-full max-w-2xl">
+    <div id="version-list"></div>
+  </main>
 
-  <!-- 弹窗 -->
-  <div id="popup" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
-    <div class="glass rounded-3xl p-8 w-96 popup-enter" id="popup-content">
-      <h3 class="text-2xl font-semibold mb-4">选择下载线路</h3>
-      <div id="line-options" class="space-y-3 mb-6"></div>
-      <button id="next-btn" disabled class="w-full py-3 rounded-xl bg-gray-500 text-white transition">
-        下一步
-      </button>
-      <div id="success" class="hidden text-center mt-4">
-        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+  <!-- Footer -->
+  <footer class="mt-10 text-center text-sm opacity-70">
+    <p>&copy; Github: github.com/bzym2/riseclientweb</p>
+  </footer>
+
+  <!-- Popup -->
+  <div id="popup" class="fixed inset-0 bg-black bg-opacity-40 hidden justify-center items-center z-50">
+    <div id="popup-content"
+      class="bg-white rounded-3xl shadow-2xl w-96 max-w-[90%] transform scale-95 opacity-0 transition-all duration-300">
+
+      <!-- 顶部导航栏 -->
+      <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200">
+        <button id="back-btn" class="text-[#007AFF] hover:text-blue-400 font-medium">返回</button>
+        <span class="font-semibold">选择下载线路</span>
+        <button id="next-btn" disabled class="text-[#007AFF] opacity-50 font-medium">下一步</button>
+      </div>
+
+      <!-- 线路选择 -->
+      <div id="line-options" class="divide-y divide-gray-200"></div>
+
+      <!-- 成功提示 -->
+      <div id="success" class="hidden text-center p-6">
+        <svg class="checkmark mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
           <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
           <path class="checkmark__check" fill="none" d="M14 27l7 7 16-16"/>
         </svg>
-        <p id="redirect-msg" class="mt-2"></p>
+        <p id="redirect-msg" class="mt-3 text-gray-600"></p>
       </div>
     </div>
   </div>
 
-  <!-- 脚注 -->
-  <footer class="text-center text-sm opacity-70 py-6">
-    <p>&copy; Github: 
-      <a href="https://github.com/bzym2/riseclientweb" class="underline hover:text-white">bzym2/riseclientweb</a>
-    </p>
-  </footer>
-
   <script>
-    // 下载数据
     const downloads = [
       {
         version: "6.6.5",
         date: "2025-07-18",
+        latest: true,
         links: {
           cn: "https://pan.baidu.com/s/xxxx",
           gdrive: "https://drive.google.com/file/d/1_wU0nKw7/view",
@@ -128,6 +110,7 @@
       {
         version: "6.6.4 R3",
         date: "2025-07-10",
+        latest: false,
         links: {
           cn: "https://pan.baidu.com/s/yyyy",
           gdrive: "https://drive.google.com/file/d/1cFGmYFro/view",
@@ -137,45 +120,55 @@
       {
         version: "6.6.4",
         date: "2025-07-03",
+        latest: false,
         links: {
           cn: "https://pan.baidu.com/s/zzzz",
-          gdrive: "https://drive.google.com/file/d/1sAXB7M9P3/view",
+          gdrive: "https://drive.google.com/file/d/1sAXB7M9/view",
           backup: "https://example.com/backup664"
         }
       }
     ];
 
     const versionList = document.getElementById("version-list");
-    downloads.forEach(d => {
-      const item = document.createElement("div");
-      item.className = "flex items-center justify-between bg-white bg-opacity-10 p-5 rounded-2xl";
-      item.innerHTML = `
-        <div>
-          <p class="text-lg font-medium">${d.version}</p>
-          <p class="text-sm opacity-70">发行日子：${d.date}</p>
-        </div>
-        <button class="download-btn bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:scale-105 transition-all text-white py-2 px-5 rounded-xl" data-version="${d.version}">
-          下载
-        </button>
-      `;
-      versionList.appendChild(item);
-    });
-
     const popup = document.getElementById("popup");
     const popupContent = document.getElementById("popup-content");
     const lineOptions = document.getElementById("line-options");
     const nextBtn = document.getElementById("next-btn");
+    const backBtn = document.getElementById("back-btn");
     const success = document.getElementById("success");
     const redirectMsg = document.getElementById("redirect-msg");
 
     let currentLinks = null;
     let selectedLine = null;
 
+    // 生成版本列表
+    downloads.forEach(d => {
+      const item = document.createElement("div");
+      item.className = "flex items-center justify-between bg-white bg-opacity-10 p-5 rounded-2xl mb-4";
+
+      const btnClass = d.latest
+        ? "bg-gradient-to-tr from-indigo-500 to-blue-400 hover:scale-105 transition-all text-white py-2 px-5 rounded-xl shadow-lg"
+        : "bg-gray-600 text-gray-300 py-2 px-5 rounded-xl cursor-not-allowed";
+
+      item.innerHTML = `
+        <div>
+          <p class="text-lg font-medium">${d.version}</p>
+          <p class="text-sm opacity-70">发行日子：${d.date}</p>
+        </div>
+        <button class="download-btn ${btnClass}" data-version="${d.version}" ${!d.latest ? "disabled" : ""}>
+          下载
+        </button>
+      `;
+      versionList.appendChild(item);
+    });
+
+    // 绑定下载按钮
     document.querySelectorAll(".download-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const version = btn.dataset.version;
         currentLinks = downloads.find(d => d.version === version).links;
         selectedLine = null;
+
         lineOptions.innerHTML = "";
         Object.entries({
           cn: "国内网盘",
@@ -183,29 +176,39 @@
           backup: "备用链接"
         }).forEach(([key, label]) => {
           const opt = document.createElement("div");
-          opt.className = "p-3 rounded-xl bg-white bg-opacity-10 cursor-pointer hover:bg-opacity-20";
+          opt.className = "px-4 py-3 cursor-pointer hover:bg-gray-100";
           opt.textContent = label;
           opt.addEventListener("click", () => {
             selectedLine = key;
-            Array.from(lineOptions.children).forEach(c => c.classList.remove("ring-2", "ring-blue-400"));
-            opt.classList.add("ring-2", "ring-blue-400");
+            Array.from(lineOptions.children).forEach(c => c.classList.remove("bg-gray-100"));
+            opt.classList.add("bg-gray-100");
             nextBtn.disabled = false;
-            nextBtn.className = "w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 transition";
+            nextBtn.classList.remove("opacity-50");
           });
           lineOptions.appendChild(opt);
         });
 
-        nextBtn.disabled = true;
-        nextBtn.className = "w-full py-3 rounded-xl bg-gray-500 text-white transition";
         success.classList.add("hidden");
+        lineOptions.classList.remove("hidden");
+        nextBtn.style.visibility = "visible";
+        backBtn.style.visibility = "visible";
+        nextBtn.disabled = true;
+        nextBtn.classList.add("opacity-50");
+
         popup.classList.remove("hidden");
-        setTimeout(() => popupContent.classList.add("popup-show"), 10);
+        popup.classList.add("show");
+        popup.classList.remove("hide");
       });
     });
 
+    // 下一步
     nextBtn.addEventListener("click", () => {
+      if (!selectedLine) return;
       success.classList.remove("hidden");
-      nextBtn.style.display = "none";
+      lineOptions.classList.add("hidden");
+      nextBtn.style.visibility = "hidden";
+      backBtn.style.visibility = "hidden";
+
       let sec = 3;
       redirectMsg.textContent = `即将在 ${sec} 秒后跳转...`;
       const timer = setInterval(() => {
@@ -218,12 +221,11 @@
       }, 1000);
     });
 
-    popup.addEventListener("click", e => {
-      if (e.target === popup) {
-        popup.classList.add("hidden");
-        popupContent.classList.remove("popup-show");
-        nextBtn.style.display = "block";
-      }
+    // 返回
+    backBtn.addEventListener("click", () => {
+      popup.classList.remove("show");
+      popup.classList.add("hide");
+      setTimeout(() => popup.classList.add("hidden"), 300);
     });
   </script>
 </body>
