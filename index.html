@@ -6,12 +6,26 @@
   <title>上升客户端最新最热下载</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* 背景渐变波浪 */
+    body {
+      background: linear-gradient(270deg, #3b82f6, #a855f7, #ec4899);
+      background-size: 600% 600%;
+      animation: gradientFlow 15s ease infinite;
+    }
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* 玻璃拟态卡片 */
     .glass {
       backdrop-filter: blur(16px);
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
-    /* 简单滚动动画 */
+
+    /* 滚动动画 */
     .fade-up {
       opacity: 0;
       transform: translateY(40px);
@@ -23,7 +37,7 @@
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white min-h-screen flex flex-col">
+<body class="text-white min-h-screen flex flex-col">
 
   <!-- Hero -->
   <section class="flex flex-col justify-center items-center flex-1 text-center p-6 space-y-6">
@@ -96,7 +110,7 @@
     </p>
   </footer>
 
-  <!-- 滚动出现动画 -->
+  <!-- 滚动动画 -->
   <script>
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
