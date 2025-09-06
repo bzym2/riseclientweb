@@ -75,13 +75,10 @@
             </div>
 
             <div class="flex items-center space-x-4">
-              <!-- 大尺寸渐变按钮：对角渐变，角度与颜色更“高级” -->
               <button id="downloadLatest" class="ripple relative overflow-hidden px-6 py-3 rounded-2xl text-white font-semibold shadow-glow transform-gpu glow"
                 style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 40%, #8b5cf6 100%);">
-                <span class="relative z-10">下载 · 境外云盘</span>
+                <span class="relative z-10">下载</span>
               </button>
-              <!-- 小按钮：镜像/说明（可扩展） -->
-              <button id="moreBtn" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/12 text-sm">更多</button>
             </div>
           </div>
 
@@ -93,7 +90,7 @@
             </div>
             <div class="bg-white/5 p-3 rounded-lg text-sm">
               <div class="text-xs text-white/80">兼容性</div>
-              <div class="font-medium mt-1">Android 9+</div>
+              <div class="font-medium mt-1">Windows 7+</div>
             </div>
             <div class="bg-white/5 p-3 rounded-lg text-sm">
               <div class="text-xs text-white/80">签名</div>
@@ -101,7 +98,7 @@
             </div>
             <div class="bg-white/5 p-3 rounded-lg text-sm">
               <div class="text-xs text-white/80">更新</div>
-              <div class="font-medium mt-1">性能优化</div>
+              <div class="font-medium mt-1">Via Fix</div>
             </div>
           </div>
         </div>
@@ -146,13 +143,13 @@
       </div>
 
       <!-- 内容区域：只有境外云盘 -->
-      <div id="popupContent" class="space-y-4">
+      <div id="popupContent" class="space-y-4 center">
         <div class="p-4 rounded-xl border border-gray-100 shadow-sm flex items-center gap-4">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7l3-7z"/>
           </svg>
           <div>
-            <div class="font-medium">境外云盘</div>
+            <div class="font-medium text-black">境外云盘</div>
             <div id="gdrivePreview" class="text-sm text-slate-500">workupload.com/.../file</div>
           </div>
           <div class="ml-auto">
@@ -180,10 +177,10 @@
   <script>
     // ====== 数据：版本与境外云盘链接 ======
     const downloads = [
-      { version: "6.6.9 fix via version", date: "2025-08-22", google: "https://workupload.com/file/6fYQCgcrWeJ", latest: true },
+      { version: "6.6.9", date: "2025-08-22", google: "https://workupload.com/file/6fYQCgcrWeJ", latest: true },
       { version: "6.6.8", date: "2025-08-20", google: "https://workupload.com/file/AgvszeXscuv" },
       { version: "6.6.7", date: "2025-08-20", google: "https://www.mediafire.com/file/08n1iaq0zb95b1h/Rise+v6+New.zip/file" },
-      { version: "Rise Crack 6.6.6", date: "2025-07-25", google: "https://workupload.com/file/fNwZrLxDbem" }
+      { version: "6.6.6", date: "2025-07-25", google: "https://workupload.com/file/fNwZrLxDbem" }
     ];
 
     // ====== 渲染历史卡片到横向滚动区 ======
